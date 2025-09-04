@@ -1,0 +1,6 @@
+.gdal-logs/**
+.install-product/**
+
+.autoenv*.zsh
+
+!**/.gitkeep
