@@ -47,3 +47,12 @@ To run QGIS, first building the image if necessary:
 # also supports the --force-image-build flag
 scripts/run.sh
 ```
+
+### Test
+
+To execute QGIS tests, first building the image if necessary:
+
+```sh
+# also supports the --force-image-build flag
+scripts/tests.sh
+```

@@ -28,3 +28,5 @@ RUN mkdir -p /QGIS/.ccache_image_build
 ENV CCACHE_DIR=/QGIS/.ccache_image_build
 RUN ccache -M 1G
 RUN ccache -s
+
+RUN git config --global --add safe.directory /QGIS
