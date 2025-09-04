@@ -52,6 +52,7 @@ export qgis_image_name=qgis/qgis-local
 if [ $build_required -eq 1 ]; then
   echo "building image"
   docker build \
+    --platform linux/amd64 \
     -t qgis/qgis3-build-deps \
     -f $qgis_base/.docker/qgis3-qt5-build-deps.dockerfile \
     $qgis_base
@@ -60,6 +61,7 @@ if [ $build_required -eq 1 ]; then
   mkdir -p $host_build_dir
 
   docker build \
+    --platform linux/amd64 \
     -t $qgis_image_name \
     -f $qgis_builder_base/Dockerfile \
     --build-arg QGIS_BIN_INSTALL_ROOT=/qgis-install \
@@ -68,6 +70,7 @@ if [ $build_required -eq 1 ]; then
   docker run \
     --rm \
     -it \
+    --platform linux/amd64 \
     -v $qgis_builder_base/scripts/container/build.sh:/build.sh:ro \
     -v $host_build_dir:/QGIS/build:rw \
     -v $qgis_builder_base/.install-product/main:/qgis-install:rw \

@@ -18,6 +18,7 @@ xhost +
 docker run \
   --rm \
   -it \
+  --platform linux/amd64 \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v $qgis_builder_base/.gdal-logs:/gdal-logs:rw \
   -v $qgis_builder_base/.install-product/main:/qgis-install:rw \
