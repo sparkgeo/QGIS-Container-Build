@@ -23,27 +23,27 @@ export qgis_repo_path=/path/to/QGIS/repo
 
 ### Build
 
-To build QGIS:
+To build the QGIS container image:
 
 ```sh
 scripts/build-if-necessary.sh
 ```
 
-A new QGIS build can be forced with a flag if required:
+A new QGIS image build can be forced with a flag if required:
 
 ```sh
-scripts/build-if-necessary.sh --force-build
+scripts/build-if-necessary.sh --force-image-build
 ```
 
 > [!NOTE]
-> `--force-build` initiates a build in the QGIS repo, but does not guarantee full re-compilation from source. If QGIS determines that the cache in the mounted `QGIS/.build` directory is up to date then it will skip build steps. For a complete re-compile first delete the `QGIS/.build` directory.
+> `--force-image-build` initiates a build of the QGIS container image, but does not guarantee full re-compilation of QGIS from source. If QGIS determines that the cache in the mounted `QGIS/.build` directory is up to date then it will skip build steps. For a complete re-compile first delete the `QGIS/.build` directory.
 
 
 ### Run
 
-To run QGIS, first building if necessary:
+To run QGIS, first building the image if necessary:
 
 ```sh
-# also supports the --force-build flag
+# also supports the --force-image-build flag
 scripts/run.sh
 ```

@@ -4,7 +4,7 @@ set -e
 
 force_build_arg=""
 for arg in "$@"; do
-  if [ "$arg" == "--force-build" ]; then
+  if [ "$arg" == "--force-image-build" ]; then
     force_build_arg="$arg"
   fi
 done

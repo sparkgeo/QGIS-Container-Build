@@ -4,44 +4,53 @@ set -e
 
 force_build=0
 for arg in "$@"; do
-  if [ "$arg" == "--force-build" ]; then
+  if [ "$arg" == "--force-image-build" ]; then
     force_build=1
   fi
 done
 
 source ./scripts/common.sh
 
-pushd $qgis_base
-# collect all data required to determine if a new build is required
+# Collect all data required to determine if a new build is required.
+# Inspect both QGIS repo and this repo, in case build approach has changed.
 version_data_path=$qgis_builder_base/.install-product/version-data
-git rev-parse HEAD > $version_data_path
-git diff HEAD >> $version_data_path
-git ls-files --others --exclude-standard | xargs -I {} sh -c "echo Untracked File: {} >> $version_data_path && cat {} >> $version_data_path"
-popd
+echo "" > $version_data_path
+declare -a repo_paths=("$qgis_base" "$qgis_builder_base")
+for repo_path in "${repo_paths[@]}"; do
+  pushd $repo_path
+  echo "Repo: $repo_path" >> $version_data_path
+  # Include latest commit hash.
+  git rev-parse HEAD >> $version_data_path
+  # Include staged and unstaged changes.
+  git diff HEAD >> $version_data_path
+  # Include content of any untracked and not-ignored files.
+  git ls-files --others --exclude-standard | xargs -I {} sh -c "echo Untracked File: {} >> $version_data_path && cat {} >> $version_data_path"
+  popd
+done
 
 build_required=1
 current_version_hash=$(md5sum $version_data_path | awk '{print $1}')
 built_version_path=$qgis_builder_base/.install-product/version
 if [ $force_build -eq 1 ]; then
-  echo "forcing build"
+  echo "forcing image build"
 else
   if [ -f "$built_version_path" ]; then
     built_version_hash=$(head -n 1 $built_version_path)
     if [ "$built_version_hash" == "$current_version_hash" ]; then
-      echo "prior build version is still valid"
+      echo "prior image build version is still valid"
       build_required=0
     else
-      echo "changes since prior build version"
+      echo "changes since prior image build version"
     fi
   else
-    echo "no prior build version exists"
+    echo "no prior image build version exists"
   fi
 fi
 
 export qgis_image_name=qgis/qgis-local
 
 if [ $build_required -eq 1 ]; then
-  echo "building"
+  echo "building image"
   docker build \
     -t qgis/qgis3-build-deps \
     -f $qgis_base/.docker/qgis3-qt5-build-deps.dockerfile \
@@ -71,5 +80,5 @@ if [ $build_required -eq 1 ]; then
 
   echo "$current_version_hash" > "$built_version_path"
 else
-  echo "not building"
+  echo "not building image"
 fi
