@@ -62,9 +62,16 @@ scripts/run.sh --force-build
 
 To execute QGIS tests:
 
-This script will build QGIS if necessary, based on the same change detection described above.
-
 ```sh
 # also supports the --force-build flag
 scripts/test.sh
+```
+
+This script will build QGIS if necessary, based on the same change detection described above.
+
+By default all tests are executed, but individual test batches can be executed using the names defined in [QGIS/.docker/docker-qgis-test.sh](https://github.com/qgis/QGIS/blob/master/.docker/docker-qgis-test.sh).
+
+```sh
+# execute without provider tests
+scripts/test.sh --test-batch-name ALL_BUT_PROVIDERS
 ```
