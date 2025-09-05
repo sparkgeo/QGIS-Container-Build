@@ -1,0 +1,15 @@
+services:
+  qgis-deps-alt:
+    tty: true
+    image: ${deps_image_name}
+    volumes:
+      - ${qgis_base}:/root/QGIS
+    links:
+      - webdav
+      - minio
+      - httpbin
+    env_file:
+      - ${qgis_base}/.docker/docker-variables.env
+      - ${qgis_builder_base}/env/common.env
+      - ${qgis_builder_base}/env/qt-5.env
+      - ${qgis_builder_base}/env/test.env

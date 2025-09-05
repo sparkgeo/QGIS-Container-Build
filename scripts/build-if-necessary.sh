@@ -47,25 +47,27 @@ else
   fi
 fi
 
+export deps_image_name="qgis/qgis3-build-deps"
+
 if [ $build_required -eq 1 ]; then
   echo "building QGIS deps image"
   docker build \
     --platform linux/amd64 \
-    -t qgis/qgis3-build-deps \
+    -t $deps_image_name \
     -f $qgis_base/.docker/qgis3-qt5-build-deps.dockerfile \
     $qgis_base
 
   echo "building QGIS"
   docker run \
     --rm \
-    -it \
+    -t \
     --platform linux/amd64 \
     -v $qgis_base:/root/QGIS:rw \
     -v $qgis_builder_base/.build-product/ccache:/root/.ccache:rw \
     --env-file $qgis_base/.docker/docker-variables.env \
-    --env-file $qgis_builder_base/qt-common.env \
-    --env-file $qgis_builder_base/qt-5.env \
-    qgis/qgis3-build-deps \
+    --env-file $qgis_builder_base/env/common.env \
+    --env-file $qgis_builder_base/env/qt-5.env \
+    $deps_image_name \
     /root/QGIS/.docker/docker-qgis-build.sh
 
   echo "$current_version_hash" > "$built_version_path"
