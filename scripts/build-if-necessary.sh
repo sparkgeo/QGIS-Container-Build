@@ -4,7 +4,7 @@ set -e
 
 force_build=0
 for arg in "$@"; do
-  if [ "$arg" == "--force-image-build" ]; then
+  if [ "$arg" == "--force-build" ]; then
     force_build=1
   fi
 done
@@ -13,7 +13,7 @@ source ./scripts/common.sh
 
 # Collect all data required to determine if a new build is required.
 # Inspect both QGIS repo and this repo, in case build approach has changed.
-version_data_path=$qgis_builder_base/.install-product/version-data
+version_data_path=$qgis_builder_base/.build-product/version-data
 echo "" > $version_data_path
 declare -a repo_paths=("$qgis_base" "$qgis_builder_base")
 for repo_path in "${repo_paths[@]}"; do
@@ -29,59 +29,46 @@ for repo_path in "${repo_paths[@]}"; do
 done
 
 build_required=1
-current_version_hash=$(md5sum $version_data_path | awk '{print $1}')
-built_version_path=$qgis_builder_base/.install-product/version
+export current_version_hash=$(md5sum $version_data_path | awk '{print $1}')
+built_version_path=$qgis_builder_base/.build-product/version-built
 if [ $force_build -eq 1 ]; then
-  echo "forcing image build"
+  echo "forcing QGIS build"
 else
   if [ -f "$built_version_path" ]; then
     built_version_hash=$(head -n 1 $built_version_path)
     if [ "$built_version_hash" == "$current_version_hash" ]; then
-      echo "prior image build version is still valid"
+      echo "prior QGIS build version is still valid"
       build_required=0
     else
-      echo "changes since prior image build version"
+      echo "changes since prior QGIS build version"
     fi
   else
-    echo "no prior image build version exists"
+    echo "no prior QGIS build version exists"
   fi
 fi
 
-export qgis_image_name=qgis/qgis-local
-
 if [ $build_required -eq 1 ]; then
-  echo "building image"
+  echo "building QGIS deps image"
   docker build \
     --platform linux/amd64 \
     -t qgis/qgis3-build-deps \
     -f $qgis_base/.docker/qgis3-qt5-build-deps.dockerfile \
     $qgis_base
 
-  host_build_dir=$qgis_base/build
-  mkdir -p $host_build_dir
-
-  docker build \
-    --platform linux/amd64 \
-    -t $qgis_image_name \
-    -f $qgis_builder_base/Dockerfile \
-    --build-arg QGIS_BIN_INSTALL_ROOT=/qgis-install \
-    $qgis_base
-
+  echo "building QGIS"
   docker run \
     --rm \
     -it \
     --platform linux/amd64 \
-    -v $qgis_builder_base/scripts/container/build.sh:/build.sh:ro \
-    -v $host_build_dir:/QGIS/build:rw \
-    -v $qgis_builder_base/.install-product/main:/qgis-install:rw \
-    -v $qgis_builder_base/.install-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
-    -e LANG=C.UTF-8 \
-    -e qgis_bin_install_root=/qgis-install \
-    -w /QGIS/build \
-    $qgis_image_name \
-    /build.sh
+    -v $qgis_base:/root/QGIS:rw \
+    -v $qgis_builder_base/.build-product/ccache:/root/.ccache:rw \
+    --env-file $qgis_base/.docker/docker-variables.env \
+    --env-file $qgis_builder_base/qt-common.env \
+    --env-file $qgis_builder_base/qt-5.env \
+    qgis/qgis3-build-deps \
+    /root/QGIS/.docker/docker-qgis-build.sh
 
   echo "$current_version_hash" > "$built_version_path"
 else
-  echo "not building image"
+  echo "not building QGIS"
 fi

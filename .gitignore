@@ -1,5 +1,5 @@
 .gdal-logs/**
-.install-product/**
+.build-product/**
 
 .autoenv*.zsh
 

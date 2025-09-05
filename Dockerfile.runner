@@ -1,0 +1,12 @@
+FROM qgis/qgis3-build-deps
+
+# Additional run-time dependencies
+RUN pip3 install --break-system-packages jinja2 pygments pexpect && apt install -y expect
+
+# Python paths are for
+# - kartoza images (compiled)
+# - deb installed
+# - built from git
+# needed to find PyQt wrapper provided by QGIS
+ARG QGIS_BIN_INSTALL_ROOT=/usr
+ENV PYTHONPATH=${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/plugins:${QGIS_BIN_INSTALL_ROOT}/lib/python3/dist-packages/qgis:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/qgis

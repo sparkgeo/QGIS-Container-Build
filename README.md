@@ -2,13 +2,13 @@
 
 This repo is intended as a side-car to support simpler QGIS builds and tests.
 
-Building QGIS from source requires a lot of dependencies and containerising the build environment is a useful way of managing these dependencies. However, the QGIS repo does not offer much support for containerised builds and, where it does, QGIS is compiled during a container image build step. By default this does not persist any build or ccache products between builds, meaning that QGIS is compiled from scratch. This is both time-consuming and resource-intensive.
+Building QGIS from source requires a lot of dependencies and containerising the build environment is a useful way of managing these dependencies. However, the QGIS repo does not provide a simple way to develop and test within containers. Container supports is limited and appears to focus on CI rather than development.
 
-This repo uses a container to execute build steps, and retains build products in a host directory, so that subsequent builds execute much faster. It avoids building if the QGIS source code has not changed since the last build.
+This repo uses containers to execute build steps, and retains build products in a host directory, so that subsequent builds execute much faster. It avoids building if source code has not changed since the last build.
 
 ## Branches
 
-There is not yet a comprehensive plan for managing branches between the two repos. Initially this repo has a `release-3_44` branch that can build the QGIS branch of the same name. Moving forwards this convention may continue, and if something changes this document should be updated.
+QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. The `qt5` branch is intended for 3.* versions.
 
 ## Usage
 
@@ -23,36 +23,46 @@ export qgis_repo_path=/path/to/QGIS/repo
 
 ### Build
 
-To build the QGIS container image:
+To build QGIS:
 
 ```sh
 scripts/build-if-necessary.sh
 ```
 
-A new QGIS image build can be forced with a flag if required:
+This script will build QGIS only if either this repo or the QGIS repo have changed since the last successful build. Change detection is based on each repo's last commit hash, staged changes, unstaged changes, and the contents of any untracked files.
+
+A new QGIS build can be forced with a flag if required, bypassing change detection. This does not guarantee complete re-compilation from source as the QGIS build configuration will respect any existing build cache it previously generated.
 
 ```sh
-scripts/build-if-necessary.sh --force-image-build
+scripts/build-if-necessary.sh --force-build
 ```
-
-> [!NOTE]
-> `--force-image-build` initiates a build of the QGIS container image, but does not guarantee full re-compilation of QGIS from source. If QGIS determines that the cache in the mounted `QGIS/.build` directory is up to date then it will skip build steps. For a complete re-compile first delete the `QGIS/.build` directory.
-
 
 ### Run
 
-To run QGIS, first building the image if necessary:
+To run QGIS:
 
 ```sh
-# also supports the --force-image-build flag
 scripts/run.sh
+```
+
+This script will build and install QGIS if necessary, based on the same change detection described above, before running the application. 
+
+A fresh install can be forced with a flag if required, bypassing change detection. The [build](#build) script's `--force-build` flag can also be used here, which will automatically force a fresh install.
+
+```sh
+# force fresh install of an existing build
+scripts/run.sh --force-install
+# force fresh build and install
+scripts/run.sh --force-build
 ```
 
 ### Test
 
-To execute QGIS tests, first building the image if necessary:
+To execute QGIS tests:
+
+This script will build QGIS if necessary, based on the same change detection described above.
 
 ```sh
-# also supports the --force-image-build flag
-scripts/tests.sh
+# also supports the --force-build flag
+scripts/test.sh
 ```
