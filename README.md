@@ -39,6 +39,8 @@ scripts/build-if-necessary.sh --force-build
 
 ### Run
 
+Currently running QGIS in a container only supports hosts with X11 (i.e. Linux desktop environments). Quartz on macOS is not guaranteed to work correctly. VNC support may be implemented for non-X11 host environments in future. 
+
 To run QGIS:
 
 ```sh
