@@ -52,7 +52,7 @@ if [ $install_required -eq 1 ]; then
     -v $qgis_base:/root/QGIS:rw \
     -v $qgis_builder_base/.build-product/main:/qgis-install:rw \
     -v $qgis_builder_base/.build-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
-    -v $qgis_builder_base/scripts/container:/builder-scripts:ro \
+    -v $qgis_builder_base/scripts/builder:/builder-scripts:ro \
     -e qgis_bin_install_root=/qgis-install \
     -w /root/QGIS/build \
     $qgis_runner_image_name \

@@ -20,9 +20,6 @@ pushd $(dirname $0)/..
 
 source ./scripts/build-if-necessary.sh $force_build_arg
 
-mkdir -p /tmp/webdav_tests && chmod 777 /tmp/webdav_tests
-mkdir -p /tmp/minio_tests/test-bucket && chmod -R 777 /tmp/minio_tests
-
 export QGIS_WORKSPACE=$qgis_base
 export QGIS_COMMON_GIT_DIR=$qgis_base
 dco="docker compose --file $qgis_base/.docker/docker-compose-testing.yml --file $qgis_builder_base/docker-compose-testing.alt.yml --project-name qgis-test"

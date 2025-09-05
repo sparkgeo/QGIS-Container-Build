@@ -1,4 +1,25 @@
 services:
+
+  webdav:
+    entrypoint: /webdav-scripts/entrypoint.sh
+    command: nginx -g 'daemon off;'
+    volumes:
+      - webdav-tmp:/tmp/webdav_tests_root/webdav_tests:rw
+      - ${qgis_builder_base}/scripts/webdav:/webdav-scripts:ro
+
+  minio:
+    volumes:
+      - minio-tmp:/data:rw
+    depends_on:
+      - volume_configurer
+
+  volume_configurer:
+    image: alpine
+    command: >
+      mkdir -p /minio-tmp/test-bucket && chmod -R 777 /minio-tmp/
+    volumes:
+      - minio-tmp:/minio-tmp:rw
+
   qgis-deps-alt:
     tty: true
     image: ${deps_image_name}
@@ -13,3 +34,7 @@ services:
       - ${qgis_builder_base}/env/common.env
       - ${qgis_builder_base}/env/qt-5.env
       - ${qgis_builder_base}/env/test.env
+
+volumes:
+  webdav-tmp:
+  minio-tmp:
