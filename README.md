@@ -1,14 +1,18 @@
 # QGIS Container Build
 
-This repo is intended as a side-car to support simpler QGIS builds and tests.
+This repo acts as a side-car to support simpler QGIS builds and tests.
 
 Building QGIS from source requires a lot of dependencies and containerising the build environment is a useful way of managing these dependencies. However, the QGIS repo does not provide a simple way to develop and test within containers. Container supports is limited and appears to focus on CI rather than development.
 
-This repo uses containers to execute build steps, and retains build products in a host directory, so that subsequent builds execute much faster. It avoids building if source code has not changed since the last build.
+This repo uses containers to execute build steps, and retains build products in a host directory, so that subsequent builds execute much faster and build products can be reused without rebuilding. It avoids building if source code has not changed since the last build.
+
+## Roadmap
+
+Ideally this repo would eventually be incorporated into the main QGIS repo to better support container-based development, however that will require some discussion. Until that happens, this repo's development will be driven by whatever is required to support Sparkgeo's QGIS development priorities.
 
 ## Branches
 
-QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. The `qt5` branch is intended for 3.* versions.
+QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. This repo's `v3` branch is intended for 3.* versions and only supports QT5.
 
 ## Usage
 
@@ -60,6 +64,9 @@ scripts/run.sh --force-build
 
 ### Test
 
+> [!NOTE]
+> This repo currently supports the `ALL_BUT_PROVIDERS` test batch as the only test option, similar to CI. Additional work is required to execute individual tests or different test batches.
+
 To execute QGIS tests:
 
 ```sh
@@ -68,10 +75,3 @@ scripts/test.sh
 ```
 
 This script will build QGIS if necessary, based on the same change detection described above.
-
-By default all tests are executed, but individual test batches can be executed using the names defined in [QGIS/.docker/docker-qgis-test.sh](https://github.com/qgis/QGIS/blob/master/.docker/docker-qgis-test.sh).
-
-```sh
-# execute without provider tests
-scripts/test.sh --test-batch-name ALL_BUT_PROVIDERS
-```

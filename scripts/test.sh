@@ -1,7 +1,7 @@
 #!/bin/bash
 
 force_build_arg=""
-test_batch_name_arg=""
+test_batch_name_arg="ALL_BUT_PROVIDERS"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
