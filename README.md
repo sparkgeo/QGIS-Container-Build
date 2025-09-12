@@ -12,7 +12,7 @@ Ideally this repo would eventually be incorporated into the main QGIS repo to be
 
 ## Branches
 
-QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. This repo's `v3` branch is intended for 3.* versions and only supports QT5.
+QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. This repo's `qt5` branch only supports QT5.
 
 ## Usage
 
