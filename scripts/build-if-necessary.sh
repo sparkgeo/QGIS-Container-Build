@@ -54,7 +54,7 @@ if [ $build_required -eq 1 ]; then
   docker build \
     --platform linux/amd64 \
     -t $deps_image_name \
-    -f $qgis_base/.docker/qgis3-qt5-build-deps.dockerfile \
+    -f $qgis_base/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile \
     $qgis_base
 
   echo "building QGIS"
@@ -66,7 +66,7 @@ if [ $build_required -eq 1 ]; then
     -v $qgis_builder_base/.build-product/ccache:/root/.ccache:rw \
     --env-file $qgis_base/.docker/docker-variables.env \
     --env-file $qgis_builder_base/env/common.env \
-    --env-file $qgis_builder_base/env/qt-5.env \
+    --env-file $qgis_builder_base/env/qt-6.env \
     $deps_image_name \
     /root/QGIS/.docker/docker-qgis-build.sh
 
