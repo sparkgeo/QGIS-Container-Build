@@ -4,12 +4,22 @@ set -e
 
 clean_build_arg=""
 clean_profile=0
-for arg in "$@"; do
-  if [ "$arg" == "--clean-build" ]; then
-    clean_build_arg="$arg"
-  elif [ "$arg" == "--clean-profile" ]; then
-    clean_profile=1
-  fi
+docker_run_additional=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --clean-build)
+      clean_build_arg="$1"
+      shift;
+      ;;
+    --clean-profile)
+      clean_profile=1
+      shift;
+      ;;
+    --docker-run-additional)
+      docker_run_additional="$2"
+      shift; shift
+      ;;
+  esac
 done
 
 pushd $(dirname $0)/..
@@ -88,5 +98,5 @@ docker run \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
   --entrypoint /entrypoint.sh \
-  $qgis_runner_image_name \
+  $docker_run_additional $qgis_runner_image_name \
   /qgis-install/bin/qgis
