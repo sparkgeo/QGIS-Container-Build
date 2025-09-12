@@ -4,14 +4,23 @@ set -e
 
 force_build_arg=""
 force_install=0
-for arg in "$@"; do
-  if [ "$arg" == "--force-build" ]; then
-    force_build_arg="$arg"
-    force_install=1
-  fi
-  if [ "$arg" == "--force-install" ]; then
-    force_install=1
-  fi
+docker_run_additional=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --force-build)
+      force_build_arg="$1"
+      force_install=1
+      shift;
+      ;;
+    --force-install)
+      force_install=1
+      shift;
+      ;;
+    --docker-run-additional)
+      docker_run_additional="$2"
+      shift; shift
+      ;;
+  esac
 done
 
 pushd $(dirname $0)/..
@@ -77,5 +86,5 @@ docker run \
   -e CPL_DEBUG=ON \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
-  $qgis_runner_image_name \
+  $docker_run_additional $qgis_runner_image_name \
   /qgis-install/bin/qgis
