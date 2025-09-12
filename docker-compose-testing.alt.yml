@@ -32,7 +32,7 @@ services:
     env_file:
       - ${qgis_base}/.docker/docker-variables.env
       - ${qgis_builder_base}/env/common.env
-      - ${qgis_builder_base}/env/qt-5.env
+      - ${qgis_builder_base}/env/qt-6.env
       - ${qgis_builder_base}/env/test.env
 
 volumes:
