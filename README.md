@@ -76,11 +76,16 @@ scripts/run.sh --clean-profile
 > [!NOTE]
 > This repo currently supports the `ALL_BUT_PROVIDERS` test batch as the only test option, similar to CI. Additional work is required to execute individual tests or different test batches.
 
-To execute QGIS tests:
+To execute all QGIS tests in the default batch:
 
 ```sh
 # also supports the --clean-build flag
 scripts/test.sh
+```
+
+To execute individual tests:
+```sh
+scripts/test.sh --test-identifier test_core_stac
 ```
 
 This script will build QGIS if necessary, based on the same change detection described above.
