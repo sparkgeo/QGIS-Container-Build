@@ -67,7 +67,7 @@ xhost +
 
 docker run \
   --rm \
-  -t \
+  -it \
   --platform linux/amd64 \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v $qgis_builder_base/.gdal-logs:/gdal-logs:rw \
@@ -78,4 +78,5 @@ docker run \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
   $qgis_runner_image_name \
-  /qgis-install/bin/qgis
+  /bin/bash
+  # /qgis-install/bin/qgis
