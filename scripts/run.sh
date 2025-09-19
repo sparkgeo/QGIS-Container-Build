@@ -63,20 +63,20 @@ else
   echo "not installing QGIS"
 fi
 
-xhost +
-
 docker run \
   --rm \
   -it \
   --platform linux/amd64 \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v /dev/dri:/dev/dri:ro \
   -v $qgis_builder_base/.gdal-logs:/gdal-logs:rw \
   -v $qgis_builder_base/.build-product/main:/qgis-install:rw \
   -v $qgis_builder_base/.build-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
-  -e DISPLAY=unix$DISPLAY \
+  -e DISPLAY=$DISPLAY \
   -e CPL_DEBUG=ON \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
+  --user $UID \
   $qgis_runner_image_name \
   /bin/bash
   # /qgis-install/bin/qgis
