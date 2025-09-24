@@ -74,11 +74,13 @@ docker run \
   -v $qgis_builder_base/.gdal-logs:/gdal-logs:rw \
   -v $qgis_builder_base/.build-product/main:/qgis-install:rw \
   -v $qgis_builder_base/.build-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
+  -v $qgis_builder_base/.qgis-profiles:/home/$qgis_runner_user/.local/share/QGIS/QGIS3/profiles:rw \
+  -v $qgis_builder_base/scripts/runner/entrypoint.sh:/entrypoint.sh:ro \
   -e DISPLAY=$DISPLAY \
   -e QT_QUICK_BACKEND=software \
   -e CPL_DEBUG=ON \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
-  --user $qgis_runner_user \
+  --entrypoint /entrypoint.sh \
   $qgis_runner_image_name \
   /qgis-install/bin/qgis

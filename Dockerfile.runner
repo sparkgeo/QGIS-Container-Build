@@ -13,5 +13,11 @@ ENV PYTHONPATH=${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/:${QGIS_BIN_INSTALL_RO
 
 ARG QGIS_USER
 RUN useradd --create-home --home-dir /home/${QGIS_USER} ${QGIS_USER}
+ENV QGIS_USER=${QGIS_USER}
+
+RUN apt-get update --fix-missing \
+  && apt-get install -y --no-install-recommends \
+  gosu \
+  && rm -rf /etc/apt/lists/*
 
 ENV LANG=C.UTF-8
