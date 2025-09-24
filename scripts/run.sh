@@ -38,11 +38,13 @@ else
   fi
 fi
 
+qgis_runner_user=runner
 if [ $install_required -eq 1 ]; then
   docker build \
     -t $qgis_runner_image_name \
     -f $qgis_builder_base/Dockerfile.runner \
     --build-arg QGIS_BIN_INSTALL_ROOT=/qgis-install \
+    --build-arg QGIS_USER=$qgis_runner_user \
     $qgis_base
 
   docker run \
@@ -63,19 +65,22 @@ else
   echo "not installing QGIS"
 fi
 
-xhost +
-
 docker run \
   --rm \
   -t \
   --platform linux/amd64 \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v /dev/dri:/dev/dri:ro \
   -v $qgis_builder_base/.gdal-logs:/gdal-logs:rw \
   -v $qgis_builder_base/.build-product/main:/qgis-install:rw \
   -v $qgis_builder_base/.build-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
-  -e DISPLAY=unix$DISPLAY \
+  -v $qgis_builder_base/.qgis-profiles:/home/$qgis_runner_user/.local/share/QGIS/QGIS3/profiles:rw \
+  -v $qgis_builder_base/scripts/runner/entrypoint.sh:/entrypoint.sh:ro \
+  -e DISPLAY=$DISPLAY \
+  -e QT_QUICK_BACKEND=software \
   -e CPL_DEBUG=ON \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
+  --entrypoint /entrypoint.sh \
   $qgis_runner_image_name \
   /qgis-install/bin/qgis
