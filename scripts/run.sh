@@ -38,11 +38,13 @@ else
   fi
 fi
 
+qgis_runner_user=runner
 if [ $install_required -eq 1 ]; then
   docker build \
     -t $qgis_runner_image_name \
     -f $qgis_builder_base/Dockerfile.runner \
     --build-arg QGIS_BIN_INSTALL_ROOT=/qgis-install \
+    --build-arg QGIS_USER=$qgis_runner_user \
     $qgis_base
 
   docker run \
@@ -73,10 +75,10 @@ docker run \
   -v $qgis_builder_base/.build-product/main:/qgis-install:rw \
   -v $qgis_builder_base/.build-product/python:/usr/local/lib/python3.12/dist-packages/qgis:rw \
   -e DISPLAY=$DISPLAY \
+  -e QT_QUICK_BACKEND=software \
   -e CPL_DEBUG=ON \
   -e CPL_LOG=/gdal-logs/cpl.log \
   -e CPL_LOG_ERRORS=ON \
-  --user $UID \
+  --user $qgis_runner_user \
   $qgis_runner_image_name \
-  /bin/bash
-  # /qgis-install/bin/qgis
+  /qgis-install/bin/qgis

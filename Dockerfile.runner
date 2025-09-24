@@ -10,3 +10,8 @@ RUN pip3 install --break-system-packages jinja2 pygments pexpect && apt install 
 # needed to find PyQt wrapper provided by QGIS
 ARG QGIS_BIN_INSTALL_ROOT=/usr
 ENV PYTHONPATH=${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/plugins:${QGIS_BIN_INSTALL_ROOT}/lib/python3/dist-packages/qgis:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/qgis
+
+ARG QGIS_USER
+RUN useradd --create-home --home-dir /home/${QGIS_USER} ${QGIS_USER}
+
+ENV LANG=C.UTF-8
