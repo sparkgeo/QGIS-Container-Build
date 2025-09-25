@@ -2,40 +2,34 @@
 
 set -e
 
-force_build_arg=""
-force_install=0
+clean_build_arg=""
+clean_profile=0
 for arg in "$@"; do
-  if [ "$arg" == "--force-build" ]; then
-    force_build_arg="$arg"
-    force_install=1
-  fi
-  if [ "$arg" == "--force-install" ]; then
-    force_install=1
+  if [ "$arg" == "--clean-build" ]; then
+    clean_build_arg="$arg"
+  elif [ "$arg" == "--clean-profile" ]; then
+    clean_profile=1
   fi
 done
 
 pushd $(dirname $0)/..
 
-source ./scripts/build-if-necessary.sh $force_build_arg
+source ./scripts/build-if-necessary.sh $clean_build_arg
 
 qgis_runner_image_name=qgis/qgis-runner
 
 install_required=1
 installed_version_path=$qgis_builder_base/.build-product/version-installed
-if [ $force_install -eq 1 ]; then
-  echo "forcing QGIS install"
-else
-  if [ -f "$installed_version_path" ]; then
-    installed_version_hash=$(head -n 1 $installed_version_path)
-    if [ "$installed_version_hash" == "$current_version_hash" ]; then
-      echo "prior QGIS install version is still valid"
-      install_required=0
-    else
-      echo "changes since prior QGIS install version"
-    fi
+if [ -f "$installed_version_path" ]; then
+  installed_version_hash=$(head -n 1 $installed_version_path)
+  if [ "$installed_version_hash" == "$current_version_hash" ]; then
+    echo "prior QGIS install version is still valid"
+    install_required=0
   else
-    echo "no prior QGIS install version exists"
+    echo "changes since prior QGIS install version"
   fi
+else
+  echo "no prior QGIS install version exists"
 fi
 
 qgis_runner_user=runner
@@ -63,6 +57,16 @@ if [ $install_required -eq 1 ]; then
   echo "$current_version_hash" > "$installed_version_path"
 else
   echo "not installing QGIS"
+fi
+
+if [ $clean_profile -eq 1 ]; then
+  echo "deleting any existing profile data"
+  docker run \
+    --rm \
+    -t \
+    -v $qgis_builder_base/.runner-local:/runner-local:rw \
+    alpine \
+    find /runner-local -mindepth 1 -maxdepth 1 -not -name .gitkeep -exec rm -rf {} \;
 fi
 
 xhost +

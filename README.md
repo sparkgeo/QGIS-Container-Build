@@ -39,10 +39,10 @@ scripts/build-if-necessary.sh
 
 This script will build QGIS only if either this repo or the QGIS repo have changed since the last successful build. Change detection is based on each repo's last commit hash, staged changes, unstaged changes, and the contents of any untracked files.
 
-A new QGIS build can be forced with a flag if required, bypassing change detection. This does not guarantee complete re-compilation from source as the QGIS build configuration will respect any existing build cache it previously generated.
+A new QGIS build can be forced with a flag if required, bypassing change detection. This deletes any existing build caches and fully re-compiles from source.
 
 ```sh
-scripts/build-if-necessary.sh --force-build
+scripts/build-if-necessary.sh --clean-build
 ```
 
 ### Run
@@ -57,13 +57,18 @@ scripts/run.sh
 
 This script will build and install QGIS if necessary, based on the same change detection described above, before running the application. 
 
-A fresh install can be forced with a flag if required, bypassing change detection. The [build](#build) script's `--force-build` flag can also be used here, which will automatically force a fresh install.
+The [build](#build) script's `--clean-build` flag can also be used here.
 
 ```sh
-# force fresh install of an existing build
-scripts/run.sh --force-install
-# force fresh build and install
-scripts/run.sh --force-build
+# force clean build
+scripts/run.sh --clean-build
+```
+
+By default a user profile is persisted between runs. To force a new user profile the `--clean-profile` flag can be used.
+
+```sh
+# force new user profile
+scripts/run.sh --clean-profile
 ```
 
 ### Test
@@ -74,7 +79,7 @@ scripts/run.sh --force-build
 To execute QGIS tests:
 
 ```sh
-# also supports the --force-build flag
+# also supports the --clean-build flag
 scripts/test.sh
 ```
 

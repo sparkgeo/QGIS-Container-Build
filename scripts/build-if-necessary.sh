@@ -2,14 +2,30 @@
 
 set -e
 
-force_build=0
+clean_build=0
 for arg in "$@"; do
-  if [ "$arg" == "--force-build" ]; then
-    force_build=1
+  if [ "$arg" == "--clean-build" ]; then
+    clean_build=1
   fi
 done
 
 source ./scripts/common.sh
+
+if [ $clean_build -eq 1 ]; then
+  echo "deleting any existing build output"
+  docker run \
+    --rm \
+    -t \
+    -v $qgis_base:/QGIS:rw \
+    alpine \
+    rm -rf /QGIS/build
+  docker run \
+    --rm \
+    -it \
+    -v $qgis_builder_base/.build-product:/build-product:rw \
+    alpine \
+    find /build-product -mindepth 1 -maxdepth 1 -not -name .gitkeep -exec rm -rf {} \;
+fi
 
 # Collect all data required to determine if a new build is required.
 # Inspect both QGIS repo and this repo, in case build approach has changed.
@@ -31,20 +47,16 @@ done
 build_required=1
 export current_version_hash=$(md5sum $version_data_path | awk '{print $1}')
 built_version_path=$qgis_builder_base/.build-product/version-built
-if [ $force_build -eq 1 ]; then
-  echo "forcing QGIS build"
-else
-  if [ -f "$built_version_path" ]; then
-    built_version_hash=$(head -n 1 $built_version_path)
-    if [ "$built_version_hash" == "$current_version_hash" ]; then
-      echo "prior QGIS build version is still valid"
-      build_required=0
-    else
-      echo "changes since prior QGIS build version"
-    fi
+if [ -f "$built_version_path" ]; then
+  built_version_hash=$(head -n 1 $built_version_path)
+  if [ "$built_version_hash" == "$current_version_hash" ]; then
+    echo "prior QGIS build version is still valid"
+    build_required=0
   else
-    echo "no prior QGIS build version exists"
+    echo "changes since prior QGIS build version"
   fi
+else
+  echo "no prior QGIS build version exists"
 fi
 
 export deps_image_name="qgis/qgis3-build-deps"

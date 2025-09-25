@@ -1,12 +1,11 @@
 #!/bin/bash
 
-force_build_arg=""
+clean_build_arg=""
 test_batch_name_arg="ALL_BUT_PROVIDERS"
-
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --force-build)
-      force_build_arg="$1"
+    --clean-build)
+      clean_build_arg="$1"
       shift;
       ;;
     --test-batch-name)
@@ -18,7 +17,7 @@ done
 
 pushd $(dirname $0)/..
 
-source ./scripts/build-if-necessary.sh $force_build_arg
+source ./scripts/build-if-necessary.sh $clean_build_arg
 
 export QGIS_WORKSPACE=$qgis_base
 export QGIS_COMMON_GIT_DIR=$qgis_base
