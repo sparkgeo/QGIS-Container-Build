@@ -12,7 +12,11 @@ ARG QGIS_BIN_INSTALL_ROOT=/usr
 ENV PYTHONPATH=${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/plugins:${QGIS_BIN_INSTALL_ROOT}/lib/python3/dist-packages/qgis:${QGIS_BIN_INSTALL_ROOT}/share/qgis/python/qgis
 
 ARG QGIS_USER
-RUN useradd --create-home --home-dir /home/${QGIS_USER} ${QGIS_USER}
+ARG QGIS_USER_UID=9099
+ARG QGIS_USER_GROUP=qgis-user
+ARG QGIS_USER_GROUP_GID=9099
+RUN groupadd --gid ${QGIS_USER_GROUP_GID} ${QGIS_USER_GROUP}
+RUN useradd --create-home --home-dir /home/${QGIS_USER} --uid ${QGIS_USER_UID} --gid ${QGIS_USER_GROUP_GID} ${QGIS_USER}
 ENV QGIS_USER=${QGIS_USER}
 
 RUN apt-get update --fix-missing \
