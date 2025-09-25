@@ -65,9 +65,11 @@ else
   echo "not installing QGIS"
 fi
 
+xhost +
+
 docker run \
   --rm \
-  -t \
+  -it \
   --platform linux/amd64 \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v /dev/dri:/dev/dri:ro \
