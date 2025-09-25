@@ -10,9 +10,13 @@ This repo uses containers to execute build steps, and retains build products in 
 
 Ideally this repo would eventually be incorporated into the main QGIS repo to better support container-based development, however that will require some discussion. Until that happens, this repo's development will be driven by whatever is required to support Sparkgeo's QGIS development priorities.
 
+## Support
+
+Support is currently focused on x86 Linux systems. On other platforms YMMV.
+
 ## Branches
 
-QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. This repo's `v3` branch is intended for 3.* versions and only supports QT5.
+QGIS is in the process of migrating from QT5 to QT6 and each platform requires different build steps. This repo's `qt6` branch is intended for 4+ versions (including 3.99 versions in preparation for 4.0) and only supports QT6. The `qt5` branch should work for <=3.44 versions but later versions do not support QT5.
 
 ## Usage
 
