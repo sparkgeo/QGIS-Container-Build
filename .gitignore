@@ -1,6 +1,6 @@
 .gdal-logs/**
 .build-product/**
-.qgis-profiles/**
+.runner-local/**
 
 .autoenv*.zsh
 
