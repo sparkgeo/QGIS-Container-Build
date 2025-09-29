@@ -1,0 +1,6 @@
+services:
+  qgis-deps-alt:
+    depends_on:
+      - mssql
+    cap_add:
+      - NET_ADMIN

@@ -73,14 +73,24 @@ scripts/run.sh --clean-profile
 
 ### Test
 
-> [!NOTE]
-> This repo currently supports the `ALL_BUT_PROVIDERS` test batch as the only test option, similar to CI. Additional work is required to execute individual tests or different test batches.
+QGIS supports a number of test batches:
+- `ALL_BUT_PROVIDERS`
+- `ALL`
+- `HANA`
+- `ORACLE`
+- `POSTGRES`
+- `SQLSERVER`
 
-To execute all QGIS tests in the default batch:
+Test batch can be specified by the `--test-batch-name` argument and defaults to `ALL_BUT_PROVIDER` to match CI.
+
+To execute QGIS tests:
 
 ```sh
 # also supports the --clean-build flag
 scripts/test.sh
+
+# specific test batch
+scripts/test.sh --test-batch-name POSTGRES
 ```
 
 To execute individual tests:
@@ -88,4 +98,4 @@ To execute individual tests:
 scripts/test.sh --test-identifier test_core_stac
 ```
 
-This script will build QGIS if necessary, based on the same change detection described above.
+The test script will build QGIS if necessary, based on the same change detection described above.

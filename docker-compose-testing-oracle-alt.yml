@@ -1,0 +1,4 @@
+services:
+  qgis-deps-alt:
+    depends_on:
+      - oracle

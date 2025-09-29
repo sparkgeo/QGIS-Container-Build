@@ -1,0 +1,9 @@
+services:
+  qgis-deps-alt:
+    depends_on:
+      - postgres
+    environment:
+      QGIS_POSTGRES_EXECUTABLE_PATH: /usr/lib/postgresql/17/bin
+      QGIS_POSTGRES_SERVER_PORT: 5432
+    cap_add:
+      - NET_ADMIN
