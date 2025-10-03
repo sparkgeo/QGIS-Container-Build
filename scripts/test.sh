@@ -64,4 +64,6 @@ test_exit_code=$?
 
 $dco down
 
+echo; echo " * Some QGIS tests modify version-controlled files. Check for unwanted changes in $qgis_base before committing further changes"; echo
+
 exit $test_exit_code
