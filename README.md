@@ -83,6 +83,8 @@ QGIS supports a number of test batches:
 
 Test batch can be specified by the `--test-batch-name` argument and defaults to `ALL_BUT_PROVIDER` to match CI.
 
+A test blocklist file can be specified via `--test-blocklist-file` to exclude certain tests and this defaults to `.ci/test_blocklist_qt6_ubuntu.txt` to match CI.
+
 To execute QGIS tests:
 
 ```sh
